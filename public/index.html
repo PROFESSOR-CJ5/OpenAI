@@ -1,66 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<title>Chatbot</title>
-<style>
-  body { font-family: Arial, sans-serif; margin: 2rem; }
-  #chat { border: 1px solid #ccc; padding: 1rem; height: 300px; overflow-y: scroll; }
-  .user { color: blue; }
-  .bot { color: green; }
-</style>
+  <title>Chatbot</title>
 </head>
 <body>
   <h1>Chat na Bot</h1>
-  <div id="chat"></div>
-  <input id="input" type="text" placeholder="Andika hapa..." />
-  <button id="send">Tuma</button>
+  <form id="chat-form">
+    <input type="text" id="message" placeholder="Andika ujumbe hapa" required />
+    <button type="submit">Tuma</button>
+  </form>
 
-<script>
-  const chatDiv = document.getElementById('chat');
-  const input = document.getElementById('input');
-  const sendBtn = document.getElementById('send');
+  <div id="chat-log"></div>
 
-  let history = [];
+  <script>
+    const form = document.getElementById("chat-form");
+    const chatLog = document.getElementById("chat-log");
 
-  function addMessage(role, text) {
-    const div = document.createElement('div');
-    div.className = role;
-    div.textContent = (role === 'user' ? 'Wewe: ' : 'Bot: ') + text;
-    chatDiv.appendChild(div);
-    chatDiv.scrollTop = chatDiv.scrollHeight;
-  }
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const messageInput = document.getElementById("message");
+      const message = messageInput.value.trim();
+      if (!message) return;
 
-  async function sendMessage() {
-    const message = input.value.trim();
-    if (!message) return;
+      chatLog.innerHTML += `<p><strong>Wewe:</strong> ${message}</p>`;
+      messageInput.value = "";
 
-    addMessage('user', message);
-    input.value = '';
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
 
-    // Call API
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message, history })
+      const data = await response.json();
+      chatLog.innerHTML += `<p><strong>Bot:</strong> ${data.bot || "Samahani, sijajibu ipasavyo."}</p>`;
     });
-
-    const data = await res.json();
-    if (data.reply) {
-      addMessage('bot', data.reply);
-      // Update history for context
-      history.push({ role: 'user', content: message });
-      history.push({ role: 'assistant', content: data.reply });
-    } else {
-      addMessage('bot', 'Samahani, sijajibu ipasavyo.');
-    }
-  }
-
-  sendBtn.addEventListener('click', sendMessage);
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter') sendMessage();
-  });
-</script>
-
+  </script>
 </body>
 </html>

@@ -1,39 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Chatbot</title>
+  <title>Professor Chatbot</title>
 </head>
 <body>
-  <h1>Chat na Bot</h1>
+  <h1>Bot ya CJ 😎</h1>
   <form id="chat-form">
-    <input type="text" id="message" placeholder="Andika ujumbe hapa" required />
+    <input type="text" id="message" placeholder="Andika swali lako hapa..." required />
     <button type="submit">Tuma</button>
   </form>
-
-  <div id="chat-log"></div>
+  <div id="response"></div>
 
   <script>
-    const form = document.getElementById("chat-form");
-    const chatLog = document.getElementById("chat-log");
-
-    form.addEventListener("submit", async (e) => {
+    const form = document.getElementById('chat-form');
+    form.onsubmit = async (e) => {
       e.preventDefault();
-      const messageInput = document.getElementById("message");
-      const message = messageInput.value.trim();
-      if (!message) return;
-
-      chatLog.innerHTML += `<p><strong>Wewe:</strong> ${message}</p>`;
-      messageInput.value = "";
-
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
+      const message = document.getElementById('message').value;
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
       });
-
-      const data = await response.json();
-      chatLog.innerHTML += `<p><strong>Bot:</strong> ${data.bot || "Samahani, sijajibu ipasavyo."}</p>`;
-    });
+      const data = await res.json();
+      document.getElementById('response').innerText = data.reply || data.error;
+    };
   </script>
 </body>
 </html>

@@ -1,17 +1,17 @@
 {
   "name": "my-chatbot",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Simple chatbot like ChatGPT using OpenAI API",
+  "main": "api/chat.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node api/chat.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["chatbot", "openai", "gpt"],
+  "author": "CJ",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "dotenv": "^17.0.1",
-    "openai": "^5.8.2"
+    "dotenv": "^16.0.3",
+    "openai": "^4.0.0"
   }
 }

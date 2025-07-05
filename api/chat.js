@@ -1,30 +1,21 @@
-// api/chat.js
-const { OpenAI } = require("openai");
+import { OpenAI } from "openai";
+import dotenv from "dotenv";
+dotenv.config();
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
+export default async (req, res) => {
   const { message } = req.body;
-
-  if (!message) {
-    return res.status(400).json({ error: "No message provided" });
-  }
+  if (!message) return res.status(400).json({ error: "Message is required." });
 
   try {
-    const chatCompletion = await openai.chat.completions.create({
+    const chatResponse = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: message }],
-      model: "gpt-3.5-turbo"
     });
 
-    res.status(200).json({ reply: chatCompletion.choices[0].message.content });
+    res.status(200).json({ reply: chatResponse.choices[0].message.content });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Something went wrong" });
+    res.status(500).json({ error: "Failed to get response from OpenAI" });
   }
-}
+};

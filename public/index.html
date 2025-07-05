@@ -1,29 +1,23 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Professor Chatbot</title>
-</head>
-<body>
-  <h1>Bot ya CJ 😎</h1>
-  <form id="chat-form">
-    <input type="text" id="message" placeholder="Andika swali lako hapa..." required />
-    <button type="submit">Tuma</button>
-  </form>
-  <div id="response"></div>
+  <head><title>CJ GPT Bot</title></head>
+  <body>
+    <h1>Mbot Chat</h1>
+    <input id="prompt" placeholder="Uliza chochote..." />
+    <button onclick="ask()">Tuma</button>
+    <pre id="response"></pre>
 
-  <script>
-    const form = document.getElementById('chat-form');
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      const message = document.getElementById('message').value;
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message })
-      });
-      const data = await res.json();
-      document.getElementById('response').innerText = data.reply || data.error;
-    };
-  </script>
-</body>
+    <script>
+      async function ask() {
+        const prompt = document.getElementById("prompt").value;
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: prompt })
+        });
+        const data = await res.json();
+        document.getElementById("response").textContent = data.reply || data.error;
+      }
+    </script>
+  </body>
 </html>
